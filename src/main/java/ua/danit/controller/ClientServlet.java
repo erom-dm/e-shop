@@ -89,13 +89,59 @@ public class ClientServlet extends HttpServlet
 				resp.sendRedirect("/shop-servlet");
 			}
 		}
-		else if(action.equals("edit"))
+		else if(action.equals("profile"))
 		{
+            String    login     = req.getParameter("login");
+            Client    client    = clientDAO.get((String) login);
 
+            PrintWriter writer = resp.getWriter();
+            String outText = HtmlUtil.readPage("edit-user.html");
+            outText = String.format(outText, client.getFirstName() + " " + client.getSecondName(), client.getLogin(), client.getLogin());
+
+            writer.print(outText);
 		}
+        else if(action.equals("edit"))
+        {
+            String    login     = req.getParameter("login");
+            String    pass      = req.getParameter("pass");
+            String    checkPass     = req.getParameter("checkPass");
+            String    firstName      = req.getParameter("firstName");
+            String    secondName      = req.getParameter("secondName");
+            Client    client    = clientDAO.get((String) login);
+
+            if(!pass.equals(checkPass)){
+                PrintWriter writer = resp.getWriter();
+                String outText = HtmlUtil.readPage("edit-user.html");
+                outText = String.format(outText, "Dear " + client.getFirstName() + " " + client.getSecondName() +
+                        ", Passwords are not the same!", client.getLogin(), client.getLogin());
+
+                writer.print(outText);
+            }
+            else{
+                client.setPassword(pass);
+                client.setFirstName(firstName);
+                client.setSecondName(secondName);
+                clientDAO.update(client);
+
+                PrintWriter writer = resp.getWriter();
+                String outText = HtmlUtil.readPage("item-list.html");
+
+                outText = String.format(outText, client.getFirstName() + " " + client.getSecondName(), client.getLogin(), HtmlUtil.getItems(login));
+
+                writer.print(outText);
+            }
+
+        }
 		else if(action.equals("delete"))
 		{
+            String    login     = req.getParameter("login");
+            //Client    client    = clientDAO.get((String) login);
+            clientDAO.delete(login);
 
+            PrintWriter writer = resp.getWriter();
+            String outText = HtmlUtil.readPage("index.html");
+
+            writer.print(outText);
 		}
 	}
 }

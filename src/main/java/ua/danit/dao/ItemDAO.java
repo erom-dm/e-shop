@@ -29,6 +29,7 @@ public class ItemDAO extends AbstractDAO<Item>
 		}
 	}
 
+
 	@Override public void update(Item item)
 	{
 		String sql = "UPDATE item SET name=?, price=? WHERE article_id=?";
